@@ -40,16 +40,14 @@
             </ul>
         </div>
         <div class="right fr">
-            <div class="gouwuche fr"><a href="/userPage/selectShoppingCar.action?userId=${sessionScope.userListSession.userId}">购物车</a></div>
+            <div class="gouwuche fr"><a href="">购物车</a></div>
             <div class="fr">
                 <ul>
                     <li><a href="${pageContext.request.contextPath}/userLogin.jsp" target="_blank">登录</a></li>
                     <li>|</li>
                     <li><a href="${pageContext.request.contextPath}/create-account.html" target="_blank" >注册</a></li>
                     <li>|</li>
-                    <li> <c:choose><c:when test="${not empty sessionScope.userListSession}">
-                        ${sessionScope.userListSession.userName}
-                    </c:when></c:choose></li>
+                    <li><a href="">消息通知</a></li>
                 </ul>
             </div>
             <div class="clear"></div>
@@ -121,3 +119,12 @@
 <!-- end danpin -->
 </body>
 </html>
+<script type="text/javascript">
+    function myfun() 　　{
+       window.location.href="${pageContext.request.contextPath}/userPage/selectPhamacyDrugs.action";
+    }
+    /*用window.onload调用myfun()*/
+
+    // 不要括号
+    window.onload = myfun;
+</script>

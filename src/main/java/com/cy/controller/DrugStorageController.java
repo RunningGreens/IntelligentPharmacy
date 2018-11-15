@@ -94,7 +94,7 @@ public class DrugStorageController  {
     public  @ResponseBody PageInfo<DrugStore> selectDrugStore(String drugClassifications, String num){
         PageInfo<DrugStore> drugStoreList=new PageInfo<DrugStore>();
         if(!StringUtils.isEmpty(drugClassifications)){
-            drugStoreList=drugStorageServiceImp.selectDrugStore(toInt(drugClassifications),num,3);
+                drugStoreList=drugStorageServiceImp.selectDrugStore(toInt(drugClassifications),num,10);
         }
         return drugStoreList;
     }

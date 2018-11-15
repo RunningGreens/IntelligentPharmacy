@@ -40,14 +40,18 @@
             </ul>
         </div>
         <div class="right fr">
-            <div class="gouwuche fr"><a href="">购物车</a></div>
+            <div class="gouwuche fr"><a href="/userPage/selectShoppingCar.action?userId=${sessionScope.userListSession.userId}">购物车</a></div>
             <div class="fr">
                 <ul>
                     <li><a href="./login.html" target="_blank">登录</a></li>
                     <li>|</li>
                     <li><a href="./register.html" target="_blank" >注册</a></li>
                     <li>|</li>
-                    <li><a href="">消息通知</a></li>
+                    <li>
+                        <c:choose><c:when test="${not empty sessionScope.userListSession}">
+                            ${sessionScope.userListSession.userName}
+                        </c:when></c:choose>
+                    </li>
                 </ul>
             </div>
             <div class="clear"></div>
@@ -59,16 +63,12 @@
 
 <!-- start banner_x -->
 <div class="banner_x center">
-    <a href="./index.html" target="_blank"><div class="logo fl"></div></a>
-    <a href=""><div class="ad_top fl"></div></a>
+    <a href="${pageContext.request.contextPath}/userPage/selectPhamacyDrugs.action"><div class="ad_top fl"><img src="${pageContext.request.contextPath}/images/yao.png" style="width: 160px;height: 120px"/></div></a>
     <div class="nav fl">
         <ul>
-            <li><a href="">抗生素</a></li>
-            <li><a href="">心脑血管用药</a></li>
-            <li><a href="">消化系统用药</a></li>
-            <li><a href="">呼吸系统用药</a></li>
-            <li><a href="">麻醉类药品</a></li>
-            <li><a href="">精神类药品</a></li>
+            <c:forEach items="${requestScope.drugClassification}" var="drugClassificationTemp"  >
+                <li><a href="${pageContext.request.contextPath}/userPage/selectPharmacyClassificationPhamacyDrugDetils.action?drugClassificationId=${drugClassificationTemp.drugClassificationId}">${drugClassificationTemp.drugClassificationName}</a></li>
+            </c:forEach>
         </ul>
     </div>
     <div class="search fr">
@@ -98,13 +98,13 @@
             <div class="jianjie mr40 ml20 mt10">规格：${phamacyDrug.norm}</div>
             <div class="jianjie mr40 ml20 mt10">批准文号：${phamacyDrug.approvalnumber}</div>
             <div class="jianjie mr40 ml20 mt10">生产产商：${phamacyDrug.manufacturer}</div>
-            <div class="jiage ml20 mt10">单价：￥${phamacyDrug.drugPrice}.00元</div>
+            <div class="jiage ml20 mt10">单价：￥${phamacyDrug.drugPrice}.00</div>
             <div class="xqxq mt20 ml20">
                 <div class="bot mt20 ft20 ftbc">总计：${phamacyDrug.drugPrice}元</div>
             </div>
             <div class="xiadan ml20 mt20">
                 <input class="jrgwc"  type="button" name="jrgwc" value="立即选购" />
-                <input class="jrgwc" type="button" name="jrgwc" value="加入购物车"  />
+                <input class="jrgwc" type="button" name="jrgwc" value="加入购物车" onclick="shoppingClick(${sessionScope.userListSession.userId},${phamacyDrug.pharmacyId})" />
 
             </div>
         </div>
@@ -113,4 +113,22 @@
 </form>
 <!-- footer -->
 </body>
+<script>
+    function shoppingClick(userId,pharmacyId) {
+        var adminName = $('#adminName').val();
+        $.post("/userPage/addShoppingCar.action",
+            {userId: userId, pharmacyId: pharmacyId
+            },
+            function (data) {
+                var info = data;
+                if (info.addUserCar) {
+                    alert("加入购物车成功");
+                    // window.location.href="${pageContext.request.contextPath}/selectPhamacyDrugDetils.action?receiverId="+pharmacyId;
+                } else {
+                }
+            }, "json");
+
+    }
+
+</script>
 </html>

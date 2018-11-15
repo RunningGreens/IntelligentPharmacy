@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.cy.mapper.UserManager">
+
+    <!--登录-->
+    <select id="userLogin" parameterType="com.cy.bean.User" resultType="com.cy.bean.User">
+        select * from USER_TABLE where USERNAME=#{userName} and PASSWORFD=#{password}
+    </select>
+
+    <!--增加用户-->
+<insert id="userRegister" parameterType="com.cy.bean.User">
+
+    insert into USER_TABLE(USERID,USERNAME,USERSTATE,USERAGE,PASSWORFD,USERSEX,USERPHONE,USERROLE)values(user_sequence.nextval,
+    #{userName},0,#{userAge},#{password},#{userSex},#{userPhone},0)
+</insert>
+
+    <!--账号检测-->
+    <select id="checkName" parameterType="java.lang.String"  resultType="com.cy.bean.User">
+        select * from  USER_TABLE where USERNAME=#{userName}
+    </select>
+
+    <update id="setPassword" parameterType="com.cy.bean.User" >
+        update USER_TABLE set  PASSWORFD =#{password} where userName=#{userName}
+    </update>
+
+
+    <insert id="addShoppingCar" >
+		insert into SHOPPING (shoppingId,userId,pharmacyId,shoppingState,shoppingNum)
+		values (SHOPPING_SEQUENCE.NEXTVAL,#{userId},#{pharmacyId},0,1)
+	</insert>
+
+    <!--查询购物车所有物品-->
+    <select id="selectShoppingCar" parameterType="java.lang.Integer" resultType="com.cy.bean.PhamacyDrug" >
+		select a.*,b.* from PHARMACY_TABLE a ,SHOPPING b where b.PHARMACYID = a.PHARMACYID and b.userId=#{userId}
+	</select>
+
+    <!--查询购物车多少物品-->
+    <select id="selectShopingNum" parameterType="java.lang.Integer" resultType="com.cy.bean.Shopping" >
+		select  count(shoppingId)allNum from PHARMACY_TABLE a ,SHOPPING b where b.PHARMACYID = a.PHARMACYID and b.userId=#{userId}
+	</select>
+
+    <!--删除购物车物品-->
+    <delete id="deleteShoppingCar" parameterType="java.lang.Integer">
+		delete from SHOPPING where shoppingId=#{shoppingId}
+	</delete>
+
+    <!--查询药品的价格-->
+    <select id="priceShoppingCar" parameterType="java.lang.Integer" resultType="com.cy.bean.PhamacyDrug" >
+		select  DRUGPRICE from PHARMACY_TABLE  where PHARMACYID=#{pharmacyId}
+	</select>
+
+    <!--查询药品的价格-->
+    <select id="AllpriceShoppingCar"  resultType="com.cy.bean.PhamacyDrug" >
+		select  b.DRUGPRICE from PHARMACY_TABLE b,SHOPPING a where a.PHARMACYID=b.PHARMACYID
+	</select>
+    <!--添加销售表-->
+    <insert id="addShoppingList" >
+        begin
+        <foreach collection="receiveList" item="item" index="index" separator=";">
+            insert into receive_table(receiveid,adminid,userid,receivedrug,receivedate,state,phamacydrugquantity,pharmacyid,url,userAddress)
+            values
+            (
+            RECEIVE_TABLE_SEQUENCE.nextval,
+            0,
+            #{item.userId},
+            #{item.receiverDrug},
+            to_char(sysdate,'YYYY-MM-DD'),
+            #{item.state},
+            1,
+            #{item.pharmacyId},
+            #{item.url,jdbcType=CLOB},
+            #{item.userAddress}
+            )
+        </foreach>
+        ;end;
+    </insert>
+
+    <!--添加销售表-->
+    <delete id="deldetShoppingList" >
+        begin
+        <foreach collection="ShoppingList" item="item" index="index" separator=";">
+            delete from SHOPPING where shoppingId=#{item.shoppingId}
+        </foreach>
+        ;end;
+    </delete>
+    
+    
+</mapper>
